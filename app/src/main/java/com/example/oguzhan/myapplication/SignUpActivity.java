@@ -88,12 +88,12 @@ public class SignUpActivity extends AppCompatActivity {
                     try {
                         String[] strArray = {email};
                         result = new getInfo().execute(strArray).get();
-                    }catch (Exception e){
-                        Log.v("Exception","Interrupted or Execution exception");
+                    } catch (Exception e) {
+                        Log.v("Exception", "Interrupted or Execution exception");
                     }
-                    if(result.equals("success")){
-                        Toast.makeText(getApplicationContext(),"Bu e-mail'i kullanan bir kullanıcı zaten mevcut",Toast.LENGTH_LONG).show();
-                    }else {
+                    if (result.equals("success")) {
+                        Toast.makeText(getApplicationContext(), "Bu e-mail'i kullanan bir kullanıcı zaten mevcut", Toast.LENGTH_LONG).show();
+                    } else {
                         final String[] userArgs = {name, surname, email, password, from};
                         new signUser().execute(userArgs);
                     }
@@ -131,26 +131,22 @@ public class SignUpActivity extends AppCompatActivity {
             Log.d("Create Response", json.toString());
 
 
-
             // check for success tag
             try {
                 int success = json.getInt("success");
 
                 if (success == 1) {
                     // successfully created product
+                    return "success";
+                } else {
                     finish();
-                        return "success";
-
-                    }
-                    else {
-                    finish();
-                        return "fail";
-                    }
-                    // closing this screen
-            }
-            catch (JSONException e) {
+                    return "fail";
+                }
+                // closing this screen
+            } catch (JSONException e) {
                 e.printStackTrace();
                 finish();
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 return "fail";
             }
         }
@@ -176,6 +172,7 @@ public class SignUpActivity extends AppCompatActivity {
             pDialog.setCancelable(true);
             pDialog.show();
         }
+
         protected String doInBackground(String... args) {
 
             String name = args[0];
@@ -229,6 +226,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
             return null;
         }
+
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();

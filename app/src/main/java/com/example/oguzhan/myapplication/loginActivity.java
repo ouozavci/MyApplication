@@ -58,7 +58,7 @@ public class loginActivity extends AppCompatActivity {
     private String getInfoUrl = "http://192.168.137.1/test.php";
     private String url_add_user = "http://192.168.137.1/create_product.php";
 
-    JSONParser jsonParser = new JSONParser();
+    //JSONParser jsonParser = new JSONParser();
     ProgressDialog pDialog;
 
     Context context;
@@ -249,6 +249,7 @@ public class loginActivity extends AppCompatActivity {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("email", email));
 
+            JSONParser jsonParser = new JSONParser();
 
             // getting JSON Object
             // Note that create product url accepts POST method
@@ -339,14 +340,19 @@ public class loginActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("password", password));
             params.add(new BasicNameValuePair("fr",from));
 
+
+            JSONParser jsonParser = new JSONParser();
             // getting JSON Object
             // Note that create product url accepts POST method
             JSONObject json = jsonParser.makeHttpRequest(url_add_user,
                     "POST", params);
 
             // check log cat fro response
-            Log.d("Create Response", json.toString());
-
+            try {
+                Log.d("Create Response", json.toString());
+            }catch (NullPointerException e){
+                    Log.e("JSon Null","Json returned null from POST");
+                }
             // check for success tag
             try {
                 int success = json.getInt("success");
