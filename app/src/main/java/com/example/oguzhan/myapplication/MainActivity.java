@@ -1,5 +1,6 @@
 package com.example.oguzhan.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -7,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Shader;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -17,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oguzhan.jsonlib.JSONParser;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -38,18 +41,26 @@ import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
 import com.facebook.share.widget.ShareDialog;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Timestamp;
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     TextView textView;
     Button btnLogout;
     ShareDialog shareDialog;
+    ProgressDialog pDialog;
 
     String name = "";
     String surname = "";
@@ -83,6 +94,19 @@ public class MainActivity extends AppCompatActivity {
             textView = (TextView) findViewById(R.id.textView);
             textView.setText("Merhaba " + name + " " + surname);
 
+
+
+            EditText txtDiary = (EditText) findViewById(R.id.txtShare);
+            String diary = "";
+            try {
+                diary = new readDiary().execute().get();
+            }catch (Exception e){
+                Toast.makeText(getApplicationContext(),"Couldn't read the diary",Toast.LENGTH_LONG).show();
+            }
+            if(!diary.equals("")){
+                txtDiary.setText(diary);
+            }
+
         }
 
         btnLogout = (Button) findViewById(R.id.btnLogout);
@@ -102,27 +126,64 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        final EditText txtShare = (EditText) findViewById(R.id.txtShare);
 
         Button btnShare = (Button) findViewById(R.id.btnShare);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareToWall(txtShare.getText().toString());
+                shareToWall();
             }
         });
 
     }
 
-    private void shareToWall(String txt) {
+    private void shareToWall() {
         if (shareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
                     .setContentTitle("My Diary")
-                    .setContentDescription(txt)
+                    .setContentDescription("Diary of " + name)
                     .setContentUrl(Uri.parse(serverUrl + "/ShowText.php?email=" + email))
             .build();
 
             shareDialog.show(shareLinkContent);
+        }
+    }
+
+    class readDiary extends AsyncTask<String,String,String>{
+        @Override
+        protected String doInBackground(String... params) {
+            JSONParser jsonParser = new JSONParser();
+            List<NameValuePair> args = new ArrayList<NameValuePair>();
+            args.add(new BasicNameValuePair("email", email));
+            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl+"/getDiary.php","GET",args);
+
+            Log.d("Create Response", jsonObject.toString());
+            String diary = "";
+            try {
+                JSONArray jsonArray = jsonObject.getJSONArray("product");
+
+                JSONObject diaDb = (JSONObject) jsonArray.get(0);
+                diary = diaDb.getString("Diary");
+            }catch (Exception e){
+                Log.e("JSonException",e.getMessage());
+            }
+            return diary;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Connecting...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
         }
     }
 }
