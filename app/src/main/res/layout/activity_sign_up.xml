@@ -9,16 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.oguzhan.myapplication.SignUpActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Name:"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,17 +17,10 @@
         android:id="@+id/txtName"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Surname"
-        android:id="@+id/tvSurname"
-        android:layout_below="@+id/txtName"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:hint="First Name" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -47,17 +30,10 @@
         android:id="@+id/txtSurname"
         android:layout_below="@+id/txtName"
         android:layout_alignLeft="@+id/txtName"
-        android:layout_alignStart="@+id/txtName" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="E-mail"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/txtSurname"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignStart="@+id/txtName"
+        android:layout_alignRight="@+id/txtName"
+        android:layout_alignEnd="@+id/txtName"
+        android:hint="Last Name" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -67,7 +43,10 @@
         android:id="@+id/txtEmail"
         android:layout_below="@+id/txtSurname"
         android:layout_alignLeft="@+id/txtSurname"
-        android:layout_alignStart="@+id/txtSurname" />
+        android:layout_alignStart="@+id/txtSurname"
+        android:layout_alignRight="@+id/txtSurname"
+        android:layout_alignEnd="@+id/txtSurname"
+        android:hint="E-mail" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -77,17 +56,10 @@
         android:id="@+id/txtPass"
         android:layout_below="@+id/txtEmail"
         android:layout_alignLeft="@+id/txtEmail"
-        android:layout_alignStart="@+id/txtEmail" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Password"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/txtEmail"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignStart="@+id/txtEmail"
+        android:layout_alignRight="@+id/txtEmail"
+        android:layout_alignEnd="@+id/txtEmail"
+        android:hint="Password" />
 
     <Button
         android:layout_width="wrap_content"
@@ -95,7 +67,10 @@
         android:text="Sign Up"
         android:id="@+id/btnSign"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/txtPass"
+        android:layout_alignEnd="@+id/txtPass" />
 
 
 </RelativeLayout>
