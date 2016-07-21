@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import com.example.oguzhan.jsonlib.JSONParser;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -60,7 +63,7 @@ public class loginActivity extends AppCompatActivity {
 
     //JSONParser jsonParser = new JSONParser();
     ProgressDialog pDialog;
-
+    ShareDialog shareDialog;
     Context context;
 
     @Override
@@ -91,11 +94,11 @@ public class loginActivity extends AppCompatActivity {
                 try {
 
                     String result = new getInfo().execute(strArray).get();
-                    Toast.makeText(context,result,Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 
-                }catch (Exception e){
+                } catch (Exception e) {
 
-                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 
                 }
 
@@ -118,7 +121,7 @@ public class loginActivity extends AppCompatActivity {
         tvResult = (TextView) findViewById(R.id.tvResult);
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.login_button);
-        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile","email"));
+        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email"));
 
 
         //Login with facebook part
@@ -149,16 +152,15 @@ public class loginActivity extends AppCompatActivity {
                                     String from = "fb";
 
                                     String[] strArray = {email, id};
-                                     String result = new getInfo().execute(strArray).get();
+                                    String result = new getInfo().execute(strArray).get();
 
-                                    if(result.equals("fail")) {
-                                       String[] args = {name, surname, email, id, from};
-                                       new signUser().execute(args);
-                                   }
+                                    if (result.equals("fail")) {
+                                        String[] args = {name, surname, email, id, from};
+                                        new signUser().execute(args);
+                                    }
 
                                     SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                                     SharedPreferences.Editor editor = pref.edit();
-
 
 
                                     editor.putBoolean("isLogged", true);
@@ -167,7 +169,7 @@ public class loginActivity extends AppCompatActivity {
                                     editor.putString("email", email);
                                     editor.commit();
 
-                                    Intent mainIntent = new Intent(getApplication(),MainActivity.class);
+                                    Intent mainIntent = new Intent(getApplication(), MainActivity.class);
                                     startActivity(mainIntent);
                                     finish();
                                 } catch (Exception e) {
@@ -260,7 +262,6 @@ public class loginActivity extends AppCompatActivity {
             Log.d("Create Response", json.toString());
 
 
-
             // check for success tag
             try {
                 int success = json.getInt("success");
@@ -270,24 +271,23 @@ public class loginActivity extends AppCompatActivity {
 
                     JSONArray jsonArray = json.getJSONArray("product");
 
-                    JSONObject passDbjsn = (JSONObject)jsonArray.get(0);
+                    JSONObject passDbjsn = (JSONObject) jsonArray.get(0);
                     String passDb = passDbjsn.getString("password");
 
-                    if(passDb.equals(pass)){
+                    if (passDb.equals(pass)) {
                         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                         SharedPreferences.Editor editor = pref.edit();
 
-                            editor.putBoolean("isLogged",true);
-                            editor.putString("name", passDbjsn.getString("name"));
-                            editor.putString("surname", passDbjsn.getString("surname"));
-                            editor.putString("email",passDbjsn.getString("email"));
-                            editor.commit();
-                       Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        editor.putBoolean("isLogged", true);
+                        editor.putString("name", passDbjsn.getString("name"));
+                        editor.putString("surname", passDbjsn.getString("surname"));
+                        editor.putString("email", passDbjsn.getString("email"));
+                        editor.commit();
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
                         pDialog.dismiss();
                         return "success";
-                    }
-                    else {
+                    } else {
                         pDialog.dismiss();
                         return "fail";
                     }
@@ -324,6 +324,7 @@ public class loginActivity extends AppCompatActivity {
             pDialog.setCancelable(true);
             pDialog.show();
         }
+
         protected String doInBackground(String... args) {
 
             String name = args[0];
@@ -338,7 +339,7 @@ public class loginActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("surname", surname));
             params.add(new BasicNameValuePair("email", email));
             params.add(new BasicNameValuePair("password", password));
-            params.add(new BasicNameValuePair("fr",from));
+            params.add(new BasicNameValuePair("fr", from));
 
 
             JSONParser jsonParser = new JSONParser();
@@ -350,9 +351,9 @@ public class loginActivity extends AppCompatActivity {
             // check log cat fro response
             try {
                 Log.d("Create Response", json.toString());
-            }catch (NullPointerException e){
-                    Log.e("JSon Null","Json returned null from POST");
-                }
+            } catch (NullPointerException e) {
+                Log.e("JSon Null", "Json returned null from POST");
+            }
             // check for success tag
             try {
                 int success = json.getInt("success");
@@ -363,7 +364,7 @@ public class loginActivity extends AppCompatActivity {
                     SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                     SharedPreferences.Editor editor = pref.edit();
 
-                    editor.putBoolean("isLogged",true);
+                    editor.putBoolean("isLogged", true);
                     editor.putString("name", name);
                     editor.putString("surname", surname);
                     editor.putString("email", email);
