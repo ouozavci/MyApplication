@@ -28,6 +28,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     String name = "";
     String surname = "";
     String email = "";
+    String fr="";
+    String userId = "";
 
     String serverUrl = "http://192.168.137.1";
 
@@ -74,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         shareDialog = new ShareDialog(MainActivity.this);
         setContentView(R.layout.activity_main);
+
+        final EditText txtDiary = (EditText) findViewById(R.id.txtShare);
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
         final SharedPreferences.Editor editor = pref.edit();
@@ -91,12 +96,14 @@ public class MainActivity extends AppCompatActivity {
             name = pref.getString("name", "error");
             surname = pref.getString("surname", "error");
             email = pref.getString("email", "error");
+            fr = pref.getString("fr","error");
+            userId = pref.getString("id","error");
             textView = (TextView) findViewById(R.id.textView);
             textView.setText("Merhaba " + name + " " + surname);
 
 
 
-            EditText txtDiary = (EditText) findViewById(R.id.txtShare);
+
             String diary = "";
             try {
                 diary = new readDiary().execute().get();
@@ -109,6 +116,27 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        Button btnSave = (Button) findViewById(R.id.btnSave);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    String diary = txtDiary.getText().toString();
+                    String[] params = {diary};
+                    String result = new saveDiary().execute(params).get();
+                        if(result.equals("success")){
+                            Toast.makeText(getApplicationContext(),"Saved.",Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Oops!Something happened...",Toast.LENGTH_SHORT).show();
+                        }
+
+                }catch (Exception e){
+
+                }
+
+        }
+        });
+
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("name", "");
                 editor.putString("surname", "");
                 editor.putString("email", "");
+                editor.putString("fr","");
                 editor.commit();
 
                 Intent loginIntent = new Intent(MainActivity.this, loginActivity.class);
@@ -128,10 +157,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         Button btnShare = (Button) findViewById(R.id.btnShare);
+      //  if(fr.equals("app"))btnShare.setVisibility(View.INVISIBLE);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 shareToWall();
+            }
+        });
+
+        Button btnRecommend = (Button) findViewById(R.id.btnRecommend);
+        btnRecommend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),userId,Toast.LENGTH_LONG).show();
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/"+userId+"/friends",
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            public void onCompleted(GraphResponse response) {
+                                Log.v("Recommend",response.toString());
+                            }
+                        }
+                ).executeAsync();
             }
         });
 
@@ -146,6 +195,49 @@ public class MainActivity extends AppCompatActivity {
             .build();
 
             shareDialog.show(shareLinkContent);
+        }
+    }
+
+    class saveDiary extends AsyncTask<String,String,String>{
+        @Override
+        protected String doInBackground(String... params) {
+            JSONParser jsonParser = new JSONParser();
+
+            String diary = params[0];
+
+            List<NameValuePair> args = new ArrayList<NameValuePair>();
+            args.add(new BasicNameValuePair("email", email));
+            args.add(new BasicNameValuePair("Diary", diary));
+            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl+"/setDiary.php","POST",args);
+
+            Log.d("Create Response", jsonObject.toString());
+
+                String result = "";
+
+            try {
+                int success = jsonObject.getInt("success");
+                if(success == 1) return "success";
+                else return "fail";
+            }catch (Exception e){
+                Log.e("JSonException",e.getMessage());
+                return "fail";
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Connecting...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
         }
     }
 

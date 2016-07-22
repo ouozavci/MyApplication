@@ -121,7 +121,7 @@ public class loginActivity extends AppCompatActivity {
         tvResult = (TextView) findViewById(R.id.tvResult);
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.login_button);
-        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email"));
+        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email","read_custom_friendlists"));
 
 
         //Login with facebook part
@@ -282,6 +282,8 @@ public class loginActivity extends AppCompatActivity {
                         editor.putString("name", passDbjsn.getString("name"));
                         editor.putString("surname", passDbjsn.getString("surname"));
                         editor.putString("email", passDbjsn.getString("email"));
+                        editor.putString("fr",passDbjsn.getString("fr"));
+                        editor.putString("id",passDb);
                         editor.commit();
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
@@ -368,6 +370,7 @@ public class loginActivity extends AppCompatActivity {
                     editor.putString("name", name);
                     editor.putString("surname", surname);
                     editor.putString("email", email);
+                    editor.putString("fr",from);
                     editor.commit();
 
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
