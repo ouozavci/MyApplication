@@ -121,7 +121,7 @@ public class loginActivity extends AppCompatActivity {
         tvResult = (TextView) findViewById(R.id.tvResult);
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.login_button);
-        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email","read_custom_friendlists"));
+        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email","read_custom_friendlists,user_friends"));
 
 
         //Login with facebook part

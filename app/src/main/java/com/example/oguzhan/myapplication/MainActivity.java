@@ -36,10 +36,12 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.internal.ShareFeedContent;
+import com.facebook.share.model.GameRequestContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
+import com.facebook.share.widget.GameRequestDialog;
 import com.facebook.share.widget.ShareDialog;
 
 import org.apache.http.NameValuePair;
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     String userId = "";
 
     String serverUrl = "http://192.168.137.1";
+
+    GameRequestDialog requestDialog;
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
         Button btnShare = (Button) findViewById(R.id.btnShare);
       //  if(fr.equals("app"))btnShare.setVisibility(View.INVISIBLE);
         btnShare.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +168,19 @@ public class MainActivity extends AppCompatActivity {
                 shareToWall();
             }
         });
+
+
+            callbackManager = CallbackManager.Factory.create();
+            requestDialog = new GameRequestDialog(this);
+            requestDialog.registerCallback(callbackManager,
+                    new FacebookCallback<GameRequestDialog.Result>() {
+                        public void onSuccess(GameRequestDialog.Result result) {
+                            String id = result.getRequestId();
+                        }
+                        public void onCancel() {}
+                        public void onError(FacebookException error) {}
+                    }
+            );
 
         Button btnRecommend = (Button) findViewById(R.id.btnRecommend);
         btnRecommend.setOnClickListener(new View.OnClickListener() {
@@ -177,13 +194,25 @@ public class MainActivity extends AppCompatActivity {
                         HttpMethod.GET,
                         new GraphRequest.Callback() {
                             public void onCompleted(GraphResponse response) {
-                                Log.v("Recommend",response.toString());
+                                txtDiary.setText(response.toString());
+                                onClickRequestButton();
                             }
                         }
                 ).executeAsync();
             }
         });
+    }
 
+    private void onClickRequestButton() {
+        GameRequestContent content = new GameRequestContent.Builder()
+                .setMessage("Come play this level with me")
+                .build();
+        requestDialog.show(content);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void shareToWall() {
