@@ -36,11 +36,13 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.internal.ShareFeedContent;
+import com.facebook.share.model.AppInviteContent;
 import com.facebook.share.model.GameRequestContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.ShareOpenGraphAction;
 import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
+import com.facebook.share.widget.AppInviteDialog;
 import com.facebook.share.widget.GameRequestDialog;
 import com.facebook.share.widget.ShareDialog;
 
@@ -68,10 +70,11 @@ public class MainActivity extends AppCompatActivity {
     String name = "";
     String surname = "";
     String email = "";
-    String fr="";
+    String fr = "";
     String userId = "";
 
-    String serverUrl = "http://192.168.137.1";
+
+    static String serverUrl = "http://192.168.1.32";
 
     GameRequestDialog requestDialog;
     CallbackManager callbackManager;
@@ -82,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         shareDialog = new ShareDialog(MainActivity.this);
         setContentView(R.layout.activity_main);
+
+
 
         final EditText txtDiary = (EditText) findViewById(R.id.txtShare);
 
@@ -101,26 +106,26 @@ public class MainActivity extends AppCompatActivity {
             name = pref.getString("name", "error");
             surname = pref.getString("surname", "error");
             email = pref.getString("email", "error");
-            fr = pref.getString("fr","error");
-            userId = pref.getString("id","error");
+            fr = pref.getString("fr", "error");
+            userId = pref.getString("id", "error");
             textView = (TextView) findViewById(R.id.textView);
             textView.setText("Merhaba " + name + " " + surname);
-
-
 
 
             String diary = "";
             try {
                 diary = new readDiary().execute().get();
-            }catch (Exception e){
-                Toast.makeText(getApplicationContext(),"Couldn't read the diary",Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "Couldn't read the diary", Toast.LENGTH_LONG).show();
             }
-            if(!diary.equals("")){
+            if (!diary.equals("")) {
                 txtDiary.setText(diary);
             }
 
         }
 
+
+        //Kaydet butonu
         Button btnSave = (Button) findViewById(R.id.btnSave);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,19 +134,20 @@ public class MainActivity extends AppCompatActivity {
                     String diary = txtDiary.getText().toString();
                     String[] params = {diary};
                     String result = new saveDiary().execute(params).get();
-                        if(result.equals("success")){
-                            Toast.makeText(getApplicationContext(),"Saved.",Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(getApplicationContext(),"Oops!Something happened...",Toast.LENGTH_SHORT).show();
-                        }
+                    if (result.equals("success")) {
+                        Toast.makeText(getApplicationContext(), "Saved.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Oops!Something happened...", Toast.LENGTH_SHORT).show();
+                    }
 
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
 
-        }
+            }
         });
 
+        //Logout butonu
         btnLogout = (Button) findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("name", "");
                 editor.putString("surname", "");
                 editor.putString("email", "");
-                editor.putString("fr","");
+                editor.putString("fr", "");
                 editor.commit();
 
                 Intent loginIntent = new Intent(MainActivity.this, loginActivity.class);
@@ -160,74 +166,51 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        //Paylaş butonu
         Button btnShare = (Button) findViewById(R.id.btnShare);
-      //  if(fr.equals("app"))btnShare.setVisibility(View.INVISIBLE);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 shareToWall();
             }
         });
-
-
-            callbackManager = CallbackManager.Factory.create();
-            requestDialog = new GameRequestDialog(this);
-            requestDialog.registerCallback(callbackManager,
-                    new FacebookCallback<GameRequestDialog.Result>() {
-                        public void onSuccess(GameRequestDialog.Result result) {
-                            String id = result.getRequestId();
-                        }
-                        public void onCancel() {}
-                        public void onError(FacebookException error) {}
-                    }
-            );
-
+        
+        //Recommend butonu
+        final String appLinkUrl = "https://fb.me/154257521647711";//developers.facebook.com dan alınan applink
+        final String previewImageUrl = "https://pixabay.com/static/uploads/photo/2015/10/01/21/39/background-image-967820_960_720.jpg";//Uygulama resim urlsi
         Button btnRecommend = (Button) findViewById(R.id.btnRecommend);
         btnRecommend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),userId,Toast.LENGTH_LONG).show();
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/"+userId+"/friends",
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-                                txtDiary.setText(response.toString());
-                                onClickRequestButton();
-                            }
-                        }
-                ).executeAsync();
+
+                if (AppInviteDialog.canShow()) {
+                    AppInviteContent content = new AppInviteContent.Builder()
+                            .setApplinkUrl(appLinkUrl)
+                            .setPreviewImageUrl(previewImageUrl)
+                            .build();
+                    AppInviteDialog.show(MainActivity.this, content);
+                }
+
             }
         });
     }
 
-    private void onClickRequestButton() {
-        GameRequestContent content = new GameRequestContent.Builder()
-                .setMessage("Come play this level with me")
-                .build();
-        requestDialog.show(content);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
+    //Paylaş methodu
     private void shareToWall() {
         if (shareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
                     .setContentTitle("My Diary")
                     .setContentDescription("Diary of " + name)
                     .setContentUrl(Uri.parse(serverUrl + "/ShowText.php?email=" + email))
-            .build();
+                    .build();
 
             shareDialog.show(shareLinkContent);
         }
     }
 
-    class saveDiary extends AsyncTask<String,String,String>{
+
+
+    class saveDiary extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
             JSONParser jsonParser = new JSONParser();
@@ -237,18 +220,18 @@ public class MainActivity extends AppCompatActivity {
             List<NameValuePair> args = new ArrayList<NameValuePair>();
             args.add(new BasicNameValuePair("email", email));
             args.add(new BasicNameValuePair("Diary", diary));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl+"/setDiary.php","POST",args);
+            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl + "/setDiary.php", "POST", args);
 
             Log.d("Create Response", jsonObject.toString());
 
-                String result = "";
+            String result = "";
 
             try {
                 int success = jsonObject.getInt("success");
-                if(success == 1) return "success";
+                if (success == 1) return "success";
                 else return "fail";
-            }catch (Exception e){
-                Log.e("JSonException",e.getMessage());
+            } catch (Exception e) {
+                Log.e("JSonException", e.getMessage());
                 return "fail";
             }
         }
@@ -270,13 +253,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class readDiary extends AsyncTask<String,String,String>{
+    class readDiary extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
             JSONParser jsonParser = new JSONParser();
             List<NameValuePair> args = new ArrayList<NameValuePair>();
             args.add(new BasicNameValuePair("email", email));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl+"/getDiary.php","GET",args);
+            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl + "/getDiary.php", "GET", args);
 
             Log.d("Create Response", jsonObject.toString());
             String diary = "";
@@ -285,8 +268,8 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject diaDb = (JSONObject) jsonArray.get(0);
                 diary = diaDb.getString("Diary");
-            }catch (Exception e){
-                Log.e("JSonException",e.getMessage());
+            } catch (Exception e) {
+                Log.e("JSonException", e.getMessage());
             }
             return diary;
         }

@@ -4,10 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +44,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,13 +64,17 @@ public class loginActivity extends AppCompatActivity {
     EditText txtEmail;
     EditText txtPass;
 
-    private String getInfoUrl = "http://192.168.137.1/test.php";
-    private String url_add_user = "http://192.168.137.1/create_product.php";
+
+
+    private String getInfoUrl = MainActivity.serverUrl+"/test.php";
+    private String url_add_user = MainActivity.serverUrl+"/create_product.php";
 
     //JSONParser jsonParser = new JSONParser();
     ProgressDialog pDialog;
     ShareDialog shareDialog;
     Context context;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
