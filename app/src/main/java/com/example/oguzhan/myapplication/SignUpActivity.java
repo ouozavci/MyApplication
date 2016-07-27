@@ -32,6 +32,8 @@ import java.io.OutputStreamWriter;
 import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String surname = txtSurname.getText().toString();
                 String email = txtEmail.getText().toString();
                 String password = txtPassword.getText().toString();
+                password = encrypt(password);
                 String from = "app";
                 if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || password.isEmpty())
                     Toast.makeText(getApplicationContext(), "Lütfen tüm bilgileri doldurun!", Toast.LENGTH_SHORT).show();
@@ -232,6 +235,22 @@ public class SignUpActivity extends AppCompatActivity {
             pDialog.dismiss();
         }
 
+    }
+
+    private String encrypt(String pass){
+        try{
+            MessageDigest messageDigestNesnesi = MessageDigest.getInstance("MD5");
+            messageDigestNesnesi.update(pass.getBytes());
+            byte messageDigestDizisi[] = messageDigestNesnesi.digest();
+            StringBuffer sb32 = new StringBuffer();
+            for (int i = 0; i < messageDigestDizisi.length; i++) {
+                sb32.append(Integer.toString((messageDigestDizisi[i] & 0xff) + 0x100, 32));
+            }
+            return sb32.toString();
+        }
+        catch(NoSuchAlgorithmException ex){
+            return "fail "/*+ex.getMessage()*/;
+        }
     }
 }
 

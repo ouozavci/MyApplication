@@ -98,6 +98,7 @@ public class loginActivity extends AppCompatActivity {
 
                 String email = txtEmail.getText().toString();
                 String pass = txtPass.getText().toString();
+                pass=encrypt(pass);
 
                 String[] strArray = {email, pass};
 
@@ -402,5 +403,21 @@ public class loginActivity extends AppCompatActivity {
             pDialog.dismiss();
         }
 
+    }
+
+    private String encrypt(String pass){
+        try{
+            MessageDigest messageDigestNesnesi = MessageDigest.getInstance("MD5");
+            messageDigestNesnesi.update(pass.getBytes());
+            byte messageDigestDizisi[] = messageDigestNesnesi.digest();
+            StringBuffer sb32 = new StringBuffer();
+            for (int i = 0; i < messageDigestDizisi.length; i++) {
+                sb32.append(Integer.toString((messageDigestDizisi[i] & 0xff) + 0x100, 32));
+            }
+            return sb32.toString();
+        }
+        catch(NoSuchAlgorithmException ex){
+            return "fail "/*+ex.getMessage()*/;
+        }
     }
 }

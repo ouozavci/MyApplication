@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     String userId = "";
 
 
-    static String serverUrl = "http://192.168.1.32";
+    static String serverUrl = "http://192.168.137.1";
 
     GameRequestDialog requestDialog;
     CallbackManager callbackManager;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 diary = new readDiary().execute().get();
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Couldn't read the diary", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Couldn't read the diary. Please check your connection!", Toast.LENGTH_LONG).show();
             }
             if (!diary.equals("")) {
                 txtDiary.setText(diary);
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 shareToWall();
             }
         });
-        
+
         //Recommend butonu
         final String appLinkUrl = "https://fb.me/154257521647711";//developers.facebook.com dan alınan applink
         final String previewImageUrl = "https://pixabay.com/static/uploads/photo/2015/10/01/21/39/background-image-967820_960_720.jpg";//Uygulama resim urlsi
@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                     AppInviteContent content = new AppInviteContent.Builder()
                             .setApplinkUrl(appLinkUrl)
                             .setPreviewImageUrl(previewImageUrl)
+                           // .setPromotionDetails("Example Promotion","EXAMPLE")
                             .build();
                     AppInviteDialog.show(MainActivity.this, content);
                 }
