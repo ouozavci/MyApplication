@@ -294,10 +294,16 @@ public class loginActivity extends AppCompatActivity {
                         editor.putString("surname", passDbjsn.getString("surname"));
                         editor.putString("email", passDbjsn.getString("email"));
                         editor.putString("fr",passDbjsn.getString("fr"));
+                        editor.putString("phone",passDbjsn.getString("phone"));
                         editor.putString("id",passDb);
                         editor.commit();
-                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(i);
+                        if(passDbjsn.getString("phone").isEmpty()){
+                            Intent i = new Intent(getApplicationContext(),AskPhoneActivity.class);
+                            startActivity(i);
+                        }else {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(i);
+                        }
                         pDialog.dismiss();
                         return "success";
                     } else {
