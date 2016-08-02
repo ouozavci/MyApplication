@@ -73,7 +73,7 @@ public class AskPhoneActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("email", args[0]));
             params.add(new BasicNameValuePair("phone", args[1]));
 
-            JSONObject obj = jsonParser.makeHttpRequest(MainActivity.serverUrl+"/setPhoneNumber.php",
+            JSONObject obj = jsonParser.makeHttpRequest(Constants.SERVER_URL+"/setPhoneNumber.php",
                     "POST",
                     params);
             return null;

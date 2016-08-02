@@ -58,8 +58,8 @@ public class SignUpActivity extends AppCompatActivity {
     EditText txtPassword;
 
     Button btnSign;
-    private String getInfoUrl = "http://192.168.137.1/test.php";
-    private String url_add_user = "http://192.168.137.1/create_product.php";
+    private String getInfoUrl = Constants.SERVER_URL+"/test.php";
+    private String url_add_user = Constants.SERVER_URL+"/create_product.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     String firebaseid = "";
 
 
-    static String serverUrl = "http://192.168.137.1";
+    //static String serverUrl = "http://192.168.137.1";
 
 
     GameRequestDialog requestDialog;
@@ -113,27 +113,38 @@ public class MainActivity extends AppCompatActivity {
         //Share window initalized
         shareDialog = new ShareDialog(MainActivity.this);
 
-
+        /*Initializing view components here */
         final EditText txtDiary = (EditText) findViewById(R.id.txtShare);
+        Button btnSave = (Button) findViewById(R.id.btnSave);
+        btnLogout = (Button) findViewById(R.id.btnLogout);
+        Button btnShare = (Button) findViewById(R.id.btnShare);
+        Button btnRecommend = (Button) findViewById(R.id.btnRecommend);
+        Button btnContacts = (Button) findViewById(R.id.btnContacts);
 
-
+        /*Check if user logged in from isLogged preference. */
         Boolean isLogged = pref.getBoolean("isLogged", false);
-        //Start login Activity first
+        /*Start login Activity first if user is NOT logged.*/
         if (!isLogged) {
+            /**************************************************************************************/
             Intent loginIntent = new Intent(this, loginActivity.class);
             startActivity(loginIntent);
             finish();
+            /**************************************************************************************/
         } else {
+        /* after logged in start notification listener service*/
             startService(new Intent(this, NotificationListener.class));
 
+        /*get other information samples from preferences*/
             name = pref.getString("name", "error");
             surname = pref.getString("surname", "error");
             email = pref.getString("email", "error");
             fr = pref.getString("fr", "error");
             userId = pref.getString("id", "error");
             firebaseid = pref.getString("firebaseid", "error");
+
+
             textView = (TextView) findViewById(R.id.textView);
-            textView.setText("Merhaba " + name + " " + surname+" "+firebaseid);
+            textView.setText("Merhaba " + name + " " + surname + " " + firebaseid);
 
 
             String diary = "";
@@ -150,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Kaydet butonu
-        Button btnSave = (Button) findViewById(R.id.btnSave);
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Logout butonu
-        btnLogout = (Button) findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Paylaş butonu
-        Button btnShare = (Button) findViewById(R.id.btnShare);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         //Recommend butonu
         final String appLinkUrl = "https://fb.me/154257521647711";//developers.facebook.com dan alınan applink
         final String previewImageUrl = "https://pixabay.com/static/uploads/photo/2015/10/01/21/39/background-image-967820_960_720.jpg";//Uygulama resim urlsi
-        Button btnRecommend = (Button) findViewById(R.id.btnRecommend);
+
         btnRecommend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Contacts butonu
-        Button btnContacts = (Button) findViewById(R.id.btnContacts);
         btnContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             ShareLinkContent shareLinkContent = new ShareLinkContent.Builder()
                     .setContentTitle("My Diary")
                     .setContentDescription("Diary of " + name)
-                    .setContentUrl(Uri.parse(serverUrl + "/ShowText.php?email=" + email))
+                    .setContentUrl(Uri.parse(Constants.SERVER_URL + "/ShowText.php?email=" + email))
                     .build();
 
             shareDialog.show(shareLinkContent);
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             List<NameValuePair> args = new ArrayList<NameValuePair>();
             args.add(new BasicNameValuePair("email", email));
             args.add(new BasicNameValuePair("Diary", diary));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl + "/setDiary.php", "POST", args);
+            JSONObject jsonObject = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/setDiary.php", "POST", args);
 
             Log.d("Create Response", jsonObject.toString());
 
@@ -307,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
             JSONParser jsonParser = new JSONParser();
             List<NameValuePair> args = new ArrayList<NameValuePair>();
             args.add(new BasicNameValuePair("email", email));
-            JSONObject jsonObject = jsonParser.makeHttpRequest(serverUrl + "/getDiary.php", "GET", args);
+            JSONObject jsonObject = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/getDiary.php", "GET", args);
 
             Log.d("Create Response", jsonObject.toString());
             String diary = "";
@@ -342,7 +349,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
     private static final int CALL_PHONE_PERMISSIONS_REQUEST = 2;
 
-
+    /*************************************************************************************************************/
+    /***************************CONTACTS PERMISSIONS**************************************************************/
+    /*************************************************************************************************************/
     public void getPermissionToReadUserContacts() {
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -441,15 +450,6 @@ public class MainActivity extends AppCompatActivity {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
-    private boolean isRegistered() {
-        //Getting shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
-
-        //Getting the value from shared preferences
-        //The second parameter is the default value
-        //if there is no value in sharedprference then it will return false
-        //that means the device is not registered
-        return sharedPreferences.getBoolean(Constants.REGISTERED, false);
-    }
+    /********************************************************************************************************/
 }
+

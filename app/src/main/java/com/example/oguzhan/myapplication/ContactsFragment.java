@@ -206,7 +206,7 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
             ArrayList<String> usingNumbers = new ArrayList<>();
             try {
                 JSONParser jsonParser = new JSONParser();
-                JSONObject obj = jsonParser.makeHttpRequest(MainActivity.serverUrl + "/checkPhones.php",
+                JSONObject obj = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/checkPhones.php",
                         "POST",
                         args);
                 JSONArray jsnNumbers = obj.getJSONArray("product");

@@ -68,8 +68,8 @@ public class loginActivity extends AppCompatActivity {
     EditText txtPass;
 
 
-    private String getInfoUrl = MainActivity.serverUrl + "/test.php";
-    private String url_add_user = MainActivity.serverUrl + "/create_product.php";
+    private String getInfoUrl = Constants.SERVER_URL + "/test.php";
+    private String url_add_user = Constants.SERVER_URL + "/create_product.php";
 
     //JSONParser jsonParser = new JSONParser();
     ProgressDialog pDialog;
