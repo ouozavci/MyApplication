@@ -78,7 +78,7 @@ public class NotificationListener extends Service {
         //Creating a notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://loginapp-f56c1.firebaseio.com/"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(""));
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         builder.setContentIntent(pendingIntent);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));

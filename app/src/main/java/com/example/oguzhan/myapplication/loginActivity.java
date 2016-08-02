@@ -68,15 +68,13 @@ public class loginActivity extends AppCompatActivity {
     EditText txtPass;
 
 
-
-    private String getInfoUrl = MainActivity.serverUrl+"/test.php";
-    private String url_add_user = MainActivity.serverUrl+"/create_product.php";
+    private String getInfoUrl = MainActivity.serverUrl + "/test.php";
+    private String url_add_user = MainActivity.serverUrl + "/create_product.php";
 
     //JSONParser jsonParser = new JSONParser();
     ProgressDialog pDialog;
     ShareDialog shareDialog;
     Context context;
-
 
 
     @Override
@@ -101,13 +99,12 @@ public class loginActivity extends AppCompatActivity {
 
                 String email = txtEmail.getText().toString();
                 String pass = txtPass.getText().toString();
-                pass=encrypt(pass);
-
-                String[] strArray = {email, pass};
+                pass = encrypt(pass);
 
                 try {
 
-                    String result = new getInfo().execute(strArray).get();
+
+                    String result = login(email, pass);
                     Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 
                 } catch (Exception e) {
@@ -135,7 +132,7 @@ public class loginActivity extends AppCompatActivity {
         tvResult = (TextView) findViewById(R.id.tvResult);
 
         btnLoginFacebook = (LoginButton) findViewById(R.id.login_button);
-        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email","read_custom_friendlists,user_friends"));
+        btnLoginFacebook.setReadPermissions(Arrays.asList("public_profile", "email", "read_custom_friendlists,user_friends"));
 
 
         //Login with facebook part
@@ -166,14 +163,14 @@ public class loginActivity extends AppCompatActivity {
                                     String from = "fb";
 
                                     String[] strArray = {email, id};
-                                    String result = new getInfo().execute(strArray).get();
+                                    String result = login(email,id);//new getInfo().execute(strArray).get();
 
                                     if (result.equals("fail")) {
                                         String[] args = {name, surname, email, id, from};
                                         new signUser().execute(args);
                                     }
 
-                                    SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+              /*                      SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
                                     SharedPreferences.Editor editor = pref.edit();
 
 
@@ -182,7 +179,7 @@ public class loginActivity extends AppCompatActivity {
                                     editor.putString("surname", surname);
                                     editor.putString("email", email);
                                     editor.commit();
-
+*/
                                     Intent mainIntent = new Intent(getApplication(), MainActivity.class);
                                     startActivity(mainIntent);
                                     finish();
@@ -261,6 +258,7 @@ public class loginActivity extends AppCompatActivity {
 
             String email = args[0];
             String pass = args[1];
+
             // Building Parameters
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("email", email));
@@ -296,14 +294,15 @@ public class loginActivity extends AppCompatActivity {
                         editor.putString("name", passDbjsn.getString("name"));
                         editor.putString("surname", passDbjsn.getString("surname"));
                         editor.putString("email", passDbjsn.getString("email"));
-                        editor.putString("fr",passDbjsn.getString("fr"));
-                        editor.putString("phone",passDbjsn.getString("phone"));
-                        editor.putString("id",passDb);
+                        editor.putString("fr", passDbjsn.getString("fr"));
+                        editor.putString(Constants.UNIQUE_ID, passDbjsn.getString("firebaseid"));
+                        editor.putString("phone", passDbjsn.getString("phone"));
+                        editor.putString("id", passDb);
                         editor.commit();
-                        if(passDbjsn.getString("phone").isEmpty()){
-                            Intent i = new Intent(getApplicationContext(),AskPhoneActivity.class);
+                        if (passDbjsn.getString("phone").isEmpty()) {
+                            Intent i = new Intent(getApplicationContext(), AskPhoneActivity.class);
                             startActivity(i);
-                        }else {
+                        } else {
                             Intent i = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(i);
                         }
@@ -366,13 +365,13 @@ public class loginActivity extends AppCompatActivity {
             Firebase firebase = new Firebase(Constants.FIREBASE_APP);
             Firebase newFirebase = firebase.push();
 
-            Map<String,String> val = new HashMap<>();
-            val.put("msg","none");
+            Map<String, String> val = new HashMap<>();
+            val.put("msg", "none");
 
             newFirebase.setValue(val);
-            String uniqueId=newFirebase.getKey();
+            String uniqueId = newFirebase.getKey();
 
-            params.add(new BasicNameValuePair("firebaseid",uniqueId));
+            params.add(new BasicNameValuePair("firebaseid", uniqueId));
 
             JSONParser jsonParser = new JSONParser();
             // getting JSON Object
@@ -400,9 +399,9 @@ public class loginActivity extends AppCompatActivity {
                     editor.putString("name", name);
                     editor.putString("surname", surname);
                     editor.putString("email", email);
-                    editor.putString("fr",from);
-                    editor.putString(Constants.UNIQUE_ID,uniqueId);
-                    editor.putBoolean(Constants.REGISTERED,true);
+                    editor.putString("fr", from);
+                    editor.putString(Constants.UNIQUE_ID, uniqueId);
+                    editor.putBoolean(Constants.REGISTERED, true);
                     editor.commit();
 
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -426,8 +425,22 @@ public class loginActivity extends AppCompatActivity {
 
     }
 
-    private String encrypt(String pass){
-        try{
+    public String login(String email, String pass) {
+
+        String[] strArray = {email, pass};
+        String result = "fail";
+        try {
+            result = new getInfo().execute(strArray).get();
+        }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+        }
+        return result;
+    }
+
+
+    private String encrypt(String pass) {
+        try {
             MessageDigest messageDigestNesnesi = MessageDigest.getInstance("MD5");
             messageDigestNesnesi.update(pass.getBytes());
             byte messageDigestDizisi[] = messageDigestNesnesi.digest();
@@ -436,8 +449,7 @@ public class loginActivity extends AppCompatActivity {
                 sb32.append(Integer.toString((messageDigestDizisi[i] & 0xff) + 0x100, 32));
             }
             return sb32.toString();
-        }
-        catch(NoSuchAlgorithmException ex){
+        } catch (NoSuchAlgorithmException ex) {
             return "fail "/*+ex.getMessage()*/;
         }
     }

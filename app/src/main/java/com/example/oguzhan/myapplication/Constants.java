@@ -10,7 +10,7 @@ public class Constants {
 
     public static final String REGISTERED = "registered";
 
-    public static final String UNIQUE_ID = "uniqueId";
+    public static final String UNIQUE_ID = "firebaseid";
 
     public static final String REGISTER_URL = "";
 }

@@ -82,9 +82,10 @@ public class MainActivity extends AppCompatActivity {
     String email = "";
     String fr = "";
     String userId = "";
+    String firebaseid = "";
 
 
-    static String serverUrl = "http://192.168.137.1";//"http://loginappgplay.herokuapp.com";
+    static String serverUrl = "http://192.168.137.1";
 
 
     GameRequestDialog requestDialog;
@@ -93,40 +94,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // startService(new Intent(this, MessagingService.class));
-      //  startService(new Intent(this, IdService.class));
+        // startService(new Intent(this, MessagingService.class));
+        //  startService(new Intent(this, IdService.class));
 
-        if(isRegistered())
-        startService(new Intent(this,NotificationListener.class));
-
+        /*Initializin facebook sdk. Facebook sdk is used for recommend and share
+        methods here *****/
         FacebookSdk.sdkInitialize(getApplicationContext());
-        shareDialog = new ShareDialog(MainActivity.this);
+
+        /*MyPref is used to get logged in user information
+            it contains isLogged?-name-surname-email-password-from(app or facebook account)-firebaseid(id for notification service),
+                if user logged in with a facebook account his facebook id is stored in password row
+         */
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+        final SharedPreferences.Editor editor = pref.edit();
+
         setContentView(R.layout.activity_main);
 
+        //Share window initalized
+        shareDialog = new ShareDialog(MainActivity.this);
 
 
         final EditText txtDiary = (EditText) findViewById(R.id.txtShare);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
-        final SharedPreferences.Editor editor = pref.edit();
 
         Boolean isLogged = pref.getBoolean("isLogged", false);
-
         //Start login Activity first
         if (!isLogged) {
-
             Intent loginIntent = new Intent(this, loginActivity.class);
             startActivity(loginIntent);
-
+            finish();
         } else {
+            startService(new Intent(this, NotificationListener.class));
 
             name = pref.getString("name", "error");
             surname = pref.getString("surname", "error");
             email = pref.getString("email", "error");
             fr = pref.getString("fr", "error");
             userId = pref.getString("id", "error");
+            firebaseid = pref.getString("firebaseid", "error");
             textView = (TextView) findViewById(R.id.textView);
-            textView.setText("Merhaba " + name + " " + surname);
+            textView.setText("Merhaba " + name + " " + surname+" "+firebaseid);
 
 
             String diary = "";
