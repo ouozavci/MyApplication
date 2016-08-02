@@ -93,10 +93,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // startService(new Intent(this, MessagingService.class));
+      //  startService(new Intent(this, IdService.class));
+
+        if(isRegistered())
+        startService(new Intent(this,NotificationListener.class));
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         shareDialog = new ShareDialog(MainActivity.this);
         setContentView(R.layout.activity_main);
+
 
 
         final EditText txtDiary = (EditText) findViewById(R.id.txtShare);
@@ -427,5 +433,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    private boolean isRegistered() {
+        //Getting shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
+
+        //Getting the value from shared preferences
+        //The second parameter is the default value
+        //if there is no value in sharedprference then it will return false
+        //that means the device is not registered
+        return sharedPreferences.getBoolean(Constants.REGISTERED, false);
     }
 }

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "368294116606",
+    "firebase_url": "https://loginapp-f56c1.firebaseio.com",
+    "project_id": "loginapp-f56c1",
+    "storage_bucket": "loginapp-f56c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368294116606:android:5c1de70bc3b4252b",
+        "android_client_info": {
+          "package_name": "com.example.oguzhan.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368294116606-k9qfj93s5t9tl3gucoae0ve524070040.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA24RTyDkQd7ZZb5ynwBbsbcA0HXdCiUx4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

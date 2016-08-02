@@ -37,6 +37,7 @@ import com.facebook.login.widget.LoginButton;
 import com.example.oguzhan.jsonlib.JSONParser;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.firebase.client.Firebase;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -48,7 +49,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class loginActivity extends AppCompatActivity {
 
@@ -360,6 +363,16 @@ public class loginActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("password", password));
             params.add(new BasicNameValuePair("fr", from));
 
+            Firebase firebase = new Firebase(Constants.FIREBASE_APP);
+            Firebase newFirebase = firebase.push();
+
+            Map<String,String> val = new HashMap<>();
+            val.put("msg","none");
+
+            newFirebase.setValue(val);
+            String uniqueId=newFirebase.getKey();
+
+            params.add(new BasicNameValuePair("firebaseid",uniqueId));
 
             JSONParser jsonParser = new JSONParser();
             // getting JSON Object
@@ -388,6 +401,8 @@ public class loginActivity extends AppCompatActivity {
                     editor.putString("surname", surname);
                     editor.putString("email", email);
                     editor.putString("fr",from);
+                    editor.putString(Constants.UNIQUE_ID,uniqueId);
+                    editor.putBoolean(Constants.REGISTERED,true);
                     editor.commit();
 
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
