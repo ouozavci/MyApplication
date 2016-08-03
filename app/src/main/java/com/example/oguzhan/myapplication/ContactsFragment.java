@@ -1,5 +1,6 @@
 package com.example.oguzhan.myapplication;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.oguzhan.jsonlib.JSONParser;
 
@@ -119,6 +121,8 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
 
             sendSms(list_items.get(position).getPhoneNumber());
 
+        }else if (v.getId() == R.id.btnSendNotification){
+            sendNotification(list_items.get(position).getPhoneNumber());
         }
 
     }
@@ -128,6 +132,12 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
         Intent msgIntent = new Intent(Intent.ACTION_VIEW);
         msgIntent.setData(Uri.parse("sms:" + phoneNumber));
         startActivity(msgIntent);
+    }
+
+    private void sendNotification(String phoneNumber) {
+        String[] params = {phoneNumber};
+        Toast.makeText(getContext(),phoneNumber,Toast.LENGTH_LONG).show();
+        new SendNotification().execute(params);
     }
 
     private void callPerson(String phoneNumber) { // telefon ara
@@ -175,7 +185,8 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
 
                         while (person_cursor.moveToNext()) {
                             String person_phoneNumber = person_cursor.getString(person_cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll(" ", "");
-                            if(person_phoneNumber.startsWith("+9"))person_phoneNumber=person_phoneNumber.substring(2);
+                            if (person_phoneNumber.startsWith("+9"))
+                                person_phoneNumber = person_phoneNumber.substring(2);
                             if (!contacts.contains(name + "/" + person_phoneNumber)) {
                                 contacts.add(name + "/" + person_phoneNumber);
                                 numbers.add(person_phoneNumber);
@@ -211,9 +222,9 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
                         args);
                 JSONArray jsnNumbers = obj.getJSONArray("product");
 
-                    for(int i=0;i<jsnNumbers.length();i++){
-                        usingNumbers.add(jsnNumbers.getString(i));
-                    }
+                for (int i = 0; i < jsnNumbers.length(); i++) {
+                    usingNumbers.add(jsnNumbers.getString(i));
+                }
 
                 if (obj != null) Log.i("phoneResult", obj.toString());
                 else Log.i("phoneResult", "null");
@@ -242,6 +253,47 @@ public class ContactsFragment extends android.support.v4.app.Fragment implements
                 progressDialog.dismiss();
             }
 
+        }
+    }
+
+    ProgressDialog pDialog;
+
+    class SendNotification extends AsyncTask<String,String,String>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(getContext());
+            pDialog.setMessage("Connecting...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            List<NameValuePair> params= new ArrayList<>();
+            SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0);
+            String fullname = pref.getString("name","")+" "+pref.getString("surname","");
+
+
+            params.add(new BasicNameValuePair("phone",args[0]));
+            params.add(new BasicNameValuePair("message",fullname+" also using LoginApp."));
+
+            JSONParser jsonParser = new JSONParser();
+
+            JSONObject object = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/sendNotification.php",
+                    "POST",
+                    params);
+
+            if(object!=null)
+                Log.i("JSONNotification",object.toString());
+            return null;
         }
     }
 }

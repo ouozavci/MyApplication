@@ -18,7 +18,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 public class NotificationListener extends Service {
-
+    SharedPreferences sharedPreferences;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -29,7 +29,7 @@ public class NotificationListener extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //Opening sharedpreferences
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
 
         //Getting the firebase id from sharedpreferences
         String id = sharedPreferences.getString(Constants.UNIQUE_ID, null);
@@ -60,7 +60,7 @@ public class NotificationListener extends Service {
                 //String msg is containing the msg that has to be shown with the notification
                 showNotification(msg);
                 }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"Notification null döndü",Toast.LENGTH_SHORT).show();
+                    Log.i("Notification","There is no notification.");
                 }
             }
 
@@ -78,12 +78,13 @@ public class NotificationListener extends Service {
         //Creating a notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(""));
+        Intent intent = new Intent(getApplicationContext(),FromNotification.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         builder.setContentIntent(pendingIntent);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         builder.setContentTitle("MyApplication");
         builder.setContentText(msg);
+        builder.setAutoCancel(true);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
     }

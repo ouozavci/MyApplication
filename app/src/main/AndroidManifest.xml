@@ -52,7 +52,12 @@
         <service
             android:name=".NotificationListener"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".FromNotification"
+            android:label="@string/title_activity_from_notification"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

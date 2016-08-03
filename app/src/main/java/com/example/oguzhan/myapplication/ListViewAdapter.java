@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class ListViewAdapter extends ArrayAdapter<PersonInfo> {
             viewHolder.txtName = (TextView)view.findViewById(R.id.txtName);
             viewHolder.txtNumber = (TextView)view.findViewById(R.id.txtNumber);
             viewHolder.txtUsing = (TextView)view.findViewById(R.id.txtUsing);
+            viewHolder.btnSendNotification = (Button)view.findViewById(R.id.btnSendNotification);
             viewHolder.imgCall = (ImageButton)view.findViewById(R.id.call_image);
             viewHolder.imgMsg = (ImageButton)view.findViewById(R.id.msg_image);
             viewHolder.imgCall.setTag(position);
@@ -61,10 +63,11 @@ public class ListViewAdapter extends ArrayAdapter<PersonInfo> {
 
         setClickListeners(viewHolder.imgCall);  // arama imagebuttona tıklanma eventi ver
         setClickListeners(viewHolder.imgMsg);   // mesaj gönderme imagebuttona tıklanma eventi ver
+        setClickListeners(viewHolder.btnSendNotification);
 
         setTagsToViews(viewHolder.imgCall, position);  // arama imagebuttona tag olarak position ver
         setTagsToViews(viewHolder.imgMsg, position);  // mesaj gönderme imagebuttona tag olarak position ver
-
+        setTagsToViews(viewHolder.btnSendNotification,position);
 
 
         viewHolder.imgMsg.setTag(position);
@@ -72,6 +75,7 @@ public class ListViewAdapter extends ArrayAdapter<PersonInfo> {
         viewHolder.txtName.setText(personInfo.getName());
         viewHolder.txtNumber.setText(personInfo.getPhoneNumber());
         viewHolder.txtUsing.setText(personInfo.isUsing()?"using loginApp!":"");
+        viewHolder.btnSendNotification.setVisibility(personInfo.isUsing()?View.VISIBLE:View.INVISIBLE);
 
 
 
@@ -96,5 +100,6 @@ public class ListViewAdapter extends ArrayAdapter<PersonInfo> {
         TextView txtUsing;
         ImageButton imgCall;
         ImageButton imgMsg;
+        Button btnSendNotification;
     }
 }

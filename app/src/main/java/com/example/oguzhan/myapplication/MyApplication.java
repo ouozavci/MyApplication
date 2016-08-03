@@ -1,6 +1,8 @@
 package com.example.oguzhan.myapplication;
 
 import android.app.Application;
+import android.content.Intent;
+
 import com.firebase.client.Firebase;
 
 /**
@@ -13,5 +15,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         Firebase.setAndroidContext(getApplicationContext());
+        startService(new Intent(this, NotificationListener.class));
     }
 }

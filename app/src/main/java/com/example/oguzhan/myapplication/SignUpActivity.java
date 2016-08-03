@@ -35,13 +35,16 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.oguzhan.jsonlib.JSONParser;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.client.Firebase;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -192,6 +195,17 @@ public class SignUpActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("password", password));
             params.add(new BasicNameValuePair("fr", from));
 
+            Firebase firebase = new Firebase(Constants.FIREBASE_APP);
+            Firebase newFirebase = firebase.push();
+
+            Map<String, String> val = new HashMap<>();
+            val.put("msg", "none");
+
+            newFirebase.setValue(val);
+            String uniqueId = newFirebase.getKey();
+
+            params.add(new BasicNameValuePair("firebaseid", uniqueId));
+
             // getting JSON Object
             // Note that create product url accepts POST method
             JSONObject json = jsonParser.makeHttpRequest(url_add_user,
@@ -216,7 +230,7 @@ public class SignUpActivity extends AppCompatActivity {
                     editor.putString("email", email);
                     editor.commit();
 
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent i = new Intent(getApplicationContext(), AskPhoneActivity.class);
                     startActivity(i);
                     // closing this screen
                     finish();

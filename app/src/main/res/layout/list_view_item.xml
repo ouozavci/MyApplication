@@ -51,6 +51,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
+
         </RelativeLayout>
 
 
@@ -61,7 +62,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_names"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"><![CDATA[
+            android:layout_alignParentEnd="true"
+            android:id="@+id/linearLayout3"><![CDATA[
 
             />
 
@@ -97,6 +99,15 @@
 
 
         </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Say Hello"
+            android:id="@+id/btnSendNotification"
+            android:layout_below="@+id/layout_names"
+            android:layout_toLeftOf="@+id/linearLayout3"
+            android:layout_toStartOf="@+id/linearLayout3" />
 
     </RelativeLayout>
 

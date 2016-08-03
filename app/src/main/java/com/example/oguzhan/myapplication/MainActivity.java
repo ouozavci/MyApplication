@@ -85,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
     String firebaseid = "";
 
 
-    //static String serverUrl = "http://192.168.137.1";
-
-
     GameRequestDialog requestDialog;
     CallbackManager callbackManager;
 
@@ -132,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             /**************************************************************************************/
         } else {
         /* after logged in start notification listener service*/
-            startService(new Intent(this, NotificationListener.class));
+
 
         /*get other information samples from preferences*/
             name = pref.getString("name", "error");
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             textView = (TextView) findViewById(R.id.textView);
-            textView.setText("Merhaba " + name + " " + surname + " " + firebaseid);
+            textView.setText("Merhaba " + name + " " + surname);
 
 
             String diary = "";
