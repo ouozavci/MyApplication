@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("surname", "");
                 editor.putString("email", "");
                 editor.putString("fr", "");
+                editor.putString(Constants.UNIQUE_ID,"none");
                 editor.commit();
 
                 Intent loginIntent = new Intent(MainActivity.this, loginActivity.class);
