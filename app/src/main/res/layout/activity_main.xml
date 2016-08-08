@@ -10,117 +10,123 @@
     tools:context="com.example.oguzhan.myapplication.MainActivity">
 
     <FrameLayout
-        android:layout_centerHorizontal="true"
         android:id="@+id/blank_fragment"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true">
-
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" >
+        android:layout_centerHorizontal="true">
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
 
             <LinearLayout
-                android:orientation="vertical"
+                android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/linearLayout2"
-                android:layout_gravity="right|bottom"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="right|top"
+                android:orientation="vertical"
                 android:weightSum="1">
 
                 <TextView
+                    android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
                     android:text="Main Activity"
                     android:textAlignment="center"
-                    android:id="@+id/textView"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="233dp"
-                    android:inputType="textMultiLine"
-                    android:ems="10"
                     android:id="@+id/txtShare"
-                    android:hint="Write something about today."
-                    android:layout_below="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="309dp"
                     android:layout_above="@+id/linearLayout2"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
                     android:layout_alignParentStart="true"
-                    android:layout_weight="0.51" />
+                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/textView"
+                    android:layout_gravity="center|bottom"
+                    android:ems="10"
+                    android:hint="Write something about today."
+                    android:inputType="textMultiLine" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="right|bottom"
+                android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/btnSave"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SAVE YOUR DIARY"
-                    android:id="@+id/btnSave"
-                    />
+                    android:text="SAVE YOUR DIARY" />
 
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/linearLayout"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true">
+                    android:layout_alignParentStart="true"
+                    android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/btnShare"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Share on Facebook"
-                        android:id="@+id/btnShare"
-                        android:textSize="10dp"
-                      />
+                        android:textSize="10dp" />
 
                     <Button
+                        android:id="@+id/btnRecommend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recommend"
-                        android:id="@+id/btnRecommend"
-                        android:textSize="10dp"
                         android:layout_alignTop="@+id/btnContacts"
-                       />
+                        android:text="Recommend"
+                        android:textSize="10dp" />
 
                     <Button
+                        android:id="@+id/btnContacts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Open contacts"
-                        android:id="@+id/btnContacts"
-                        android:textSize="10dp"
-                        />
+                        android:textSize="10dp" />
                 </LinearLayout>
+
                 <Button
+                    android:id="@+id/btnLogout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Log Out"
-                    android:id="@+id/btnLogout"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"/>
+                    android:text="Log Out" />
 
             </LinearLayout>
 
         </FrameLayout>
 
     </FrameLayout>
-
-
 
 </RelativeLayout>
