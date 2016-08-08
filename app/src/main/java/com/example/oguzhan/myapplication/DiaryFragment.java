@@ -60,7 +60,7 @@ public class DiaryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_diary, container, false);
-        
+
         /*Initializin facebook sdk. Facebook sdk is used for recommend and share
         methods here *****/
         FacebookSdk.sdkInitialize(getContext());
@@ -152,7 +152,7 @@ public class DiaryFragment extends Fragment {
                 editor.putString("surname", "");
                 editor.putString("email", "");
                 editor.putString("fr", "");
-                editor.putString(Constants.UNIQUE_ID,"none");
+                editor.putString(Constants.UNIQUE_ID, "none");
                 editor.commit();
 
                 Intent loginIntent = new Intent(getContext(), loginActivity.class);
