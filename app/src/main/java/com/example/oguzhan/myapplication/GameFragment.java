@@ -39,7 +39,7 @@ import java.util.List;
 public class GameFragment extends Fragment implements View.OnClickListener{
 
     public List<PersonInfo> list_items = new ArrayList<PersonInfo>();
-    private ListViewAdapter listviewAdapter;
+    private GameUsersAdapter listviewAdapter;
     private ProgressDialog progressDialog;
     private Button button_start;
     private ListView listview_contacts;
@@ -101,9 +101,9 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         messagesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-           //     String message = dataSnapshot.getValue(String.class);
-              //  text.setText(message);
-           //     Log.i("MessageFromFirebase",message);
+                //     String message = dataSnapshot.getValue(String.class);
+                //  text.setText(message);
+                //     Log.i("MessageFromFirebase",message);
             }
 
             @Override
@@ -118,40 +118,20 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
         int position = (Integer) v.getTag(R.id.key_position);
 
-        if (v.getId() == R.id.call_image) {   // arama butonu tıklandığı zaman
+        if (v.getId() == R.id.btnInvite) {   // arama butonu tıklandığı zaman
 
-            callPerson(list_items.get(position).getPhoneNumber());
+            invite2Game(list_items.get(position).getPhoneNumber());
 
-        } else if (v.getId() == R.id.msg_image) {   // sms butonu tıklandığı zaman
-
-            sendSms(list_items.get(position).getPhoneNumber());
-
-        }else if (v.getId() == R.id.btnSendNotification){
-            sendNotification(list_items.get(position).getPhoneNumber());
         }
-
     }
 
-    private void sendSms(String phoneNumber) {  // sms gönder
+    private void invite2Game(String phoneNumber) {  // sms gönder
+        SharedPreferences pref = getContext().getSharedPreferences("MyPref", 0);
+        String fullname = pref.getString("name","")+" "+pref.getString("surname","");
 
-        Intent msgIntent = new Intent(Intent.ACTION_VIEW);
-        msgIntent.setData(Uri.parse("sms:" + phoneNumber));
-        startActivity(msgIntent);
+        String[] params = {phoneNumber,"Invited by "+fullname};
+        new SendMessage().execute(params);
     }
-
-    private void sendNotification(String phoneNumber) {
-        String[] params = {phoneNumber};
-        Toast.makeText(getContext(), phoneNumber, Toast.LENGTH_LONG).show();
-        new SendNotification().execute(params);
-    }
-
-    private void callPerson(String phoneNumber) { // telefon ara
-
-        Intent phoneCallIntent = new Intent(Intent.ACTION_CALL);
-        phoneCallIntent.setData(Uri.parse("tel:" + phoneNumber));
-        startActivity(phoneCallIntent);
-    }
-
 
     public class FetchAsyncTask extends AsyncTask<Void, Void, List<PersonInfo>> {
 
@@ -251,7 +231,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
         @Override
         protected void onPostExecute(List contactList) {
 
-            listviewAdapter = new ListViewAdapter(getActivity(), contactList, GameFragment.this);
+            listviewAdapter = new GameUsersAdapter(getActivity(), contactList, GameFragment.this);
             listview_contacts.setAdapter(listviewAdapter);
 
             if (progressDialog.isShowing()) {
@@ -264,7 +244,7 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
     ProgressDialog pDialog;
 
-    class SendNotification extends AsyncTask<String,String,String>{
+    class SendMessage extends AsyncTask<String,String,String>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -289,11 +269,11 @@ public class GameFragment extends Fragment implements View.OnClickListener{
 
 
             params.add(new BasicNameValuePair("phone",args[0]));
-            params.add(new BasicNameValuePair("message",fullname+" also using LoginApp."));
+            params.add(new BasicNameValuePair("message",args[1]));
 
             JSONParser jsonParser = new JSONParser();
 
-            JSONObject object = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/sendNotification.php",
+            JSONObject object = jsonParser.makeHttpRequest(Constants.SERVER_URL + "/sendMessage.php",
                     "POST",
                     params);
 
